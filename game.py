@@ -45,24 +45,32 @@ class GameBoard:
         return column_idx, row_idx
 
     def check_move(self, x, y):
-        token = self.game_board[x][y]
-        def _is_players_color(x, y):
-            print(x, y)
-            return self.game_board[x][y] == token
+        move_value = self.game_board[x][y]
+
+        def _is_players_color(check_x, check_y):
+            return self.game_board[check_x][check_y] == move_value
 
         w_to_e, s_to_n, sw_to_ne, nw_to_se = 0, 0, 0, 0
         for offset in range(-3, 4):
             offset_x, offset_y, inv_offset_y = x + offset, y + offset, y - offset
-            print(f'{offset_x=}, {offset_y=}, {inv_offset_y=}')
             x_offset_fits = offset_x >= 0 and offset_x <= self.columns - 1
             y_offset_fits = offset_y >= 0 and offset_y <= self.rows - 1
-            inv_offset_y_fits = inv_offset_y >= 0 and offset_y <= self.rows - 1
+            inv_offset_y_fits = inv_offset_y >= 0 and inv_offset_y <= self.rows - 1
+            
+            try:
+                print( f'{x=}, {offset_y=} val = {self.game_board[x][inv_offset_y]}')
+                print( f'{offset_x=}, {y=} val = {self.game_board[offset_x][y]}')
+                print( f'{offset_x=}, {offset_y=} val = {self.game_board[offset_x][inv_offset_y]}')
+                print( f'{offset_x=}, {inv_offset_y=} val = {self.game_board[offset_x][inv_offset_y]}')
+            except:
+                pass
 
             w_to_e = w_to_e + 1 if x_offset_fits and _is_players_color(offset_x, y) else 0
             s_to_n = s_to_n + 1 if y_offset_fits and _is_players_color(x, offset_y) else 0
             sw_to_ne = sw_to_ne + 1 if x_offset_fits and y_offset_fits and _is_players_color(offset_x, offset_y) else 0
-            nw_to_se = nw_to_se + 1 if x_offset_fits and inv_offset_y_fits and _is_players_color(x, offset_y) else 0
-
+            nw_to_se = nw_to_se + 1 if x_offset_fits and inv_offset_y_fits and _is_players_color(offset_x, inv_offset_y) else 0
+            
+            print(f'{w_to_e=}, {s_to_n=}, {sw_to_ne=}, {nw_to_se=}')
             if self.win_sequence_count in (w_to_e, s_to_n, sw_to_ne, nw_to_se):
                 return True
 
@@ -83,8 +91,8 @@ class Game:
         return None not in self.players.values()
     
     def add_player(self, username):
-        if username in self.players.values():
-            raise game_exceptions.SecondJoinAttemptError
+        # if username in self.players.values():
+        #     raise game_exceptions.SecondJoinAttemptError
 
         self.players[GameBoard.yellow] = username
         self.current_move = random.choice([

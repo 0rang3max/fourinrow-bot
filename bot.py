@@ -43,7 +43,8 @@ def end_game(update: Update, context: CallbackContext) -> None:
 def join(update: Update, context: CallbackContext) -> None:
     game_id = update.message.chat_id
     username = update.message.from_user.username
-    if not (game := GAMES.get(game_id)):
+    game: Game = GAMES.get(game_id)
+    if not game:
         update.message.reply_text('No active games found!')
         return
     try:
