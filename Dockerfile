@@ -2,8 +2,8 @@ FROM python:3.10-alpine
 
 WORKDIR /opt
 
-COPY requiremnts.txt .
-RUN pip install -r requiremnts.txt
+COPY requirements.txt .
+RUN pip install -r requirements.txt
 
 COPY . .
 
