@@ -76,45 +76,28 @@ class GameBoard:
 
 
 class Game:
-    not_ready_placeholder = 'Waiting for second player...'
-
-    def __init__(self, first_player) -> None:
+    moves = [GameBoard.red, GameBoard.yellow]
+    def __init__(self, players: list) -> None:
         self.game_board: GameBoard = GameBoard()
-        self.current_move: typing.Union[str,None] = None
-        self.players: dict = {
-            GameBoard.red: first_player,
-            GameBoard.yellow: None,
-        }
-
-    @property
-    def players_ready(self):
-        return None not in self.players.values()
-    
-    def add_player(self, username):
-        # if username in self.players.values():
-        #     raise game_exceptions.SecondJoinAttemptError
-
-        self.players[GameBoard.yellow] = username
-        self.current_move = random.choice([
-            GameBoard.red, GameBoard.yellow
-        ])
+        self.current_move: str = random.choice(self.moves)
+        self.players: dict = dict(zip(self.moves, players))
 
     def make_move(self, username, players_move):
         if self.players[self.current_move] != username:
             raise game_exceptions.WrongPlayerMoveError
 
-        column_idx = players_move-1
-        if column_idx < 0 or column_idx > 6:
+        if players_move < 0 or players_move > 6:
             raise game_exceptions.BadColumnChoiceError
 
-        token_pos = self.game_board.make_move(column_idx, self.current_move)
-        self.current_move = GameBoard.yellow if self.current_move == GameBoard.red else GameBoard.red
+        token_pos = self.game_board.make_move(players_move, self.current_move)
+        self.current_move = (
+            GameBoard.yellow if self.current_move == GameBoard.red 
+            else GameBoard.red
+        )
+
         return self.game_board.check_move(*token_pos)
 
     def __str__(self):
-        if not self.players_ready:
-            return self.not_ready_placeholder
-
         header = '1️⃣2️⃣3️⃣4️⃣5️⃣6️⃣7️⃣'
         footer = f'Current move: {GameBoard.tokens_repr[self.current_move]} @{self.players[self.current_move]}'
         return '\n'.join([header, str(self.game_board), footer ])
