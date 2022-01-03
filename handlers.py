@@ -52,6 +52,7 @@ def handle_keyboard(update: Update, context: CallbackContext) -> None:
         return
     
     username = query.from_user.username
+    game.check_players_move_order(username)
     if players_move_str == 'surrender':
         winner = (set(game.players.values()) - {username}).pop()
         context.bot.edit_message_text(

@@ -82,10 +82,12 @@ class Game:
         self.current_move: str = random.choice(self.moves)
         self.players: dict = dict(zip(self.moves, players))
 
-    def make_move(self, username, players_move):
+    def check_players_move_order(self, username):
         if self.players[self.current_move] != username:
             raise game_exceptions.WrongPlayerMoveError
 
+    def make_move(self, username, players_move):
+        self.check_players_move_order(username)
         if players_move < 0 or players_move > 6:
             raise game_exceptions.BadColumnChoiceError
 
