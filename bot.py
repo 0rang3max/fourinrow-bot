@@ -1,8 +1,8 @@
+import os
 import logging
 
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler
 
-from config import TOKEN # Add config.py with TOKEN variable
 from handlers import handle_help, handle_start_game, handle_keyboard
 
 # Enable logging
@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 def main() -> None:
-    updater = Updater(TOKEN)
+    updater = Updater(os.environ['BOT_TOKEN'])
     dispatcher = updater.dispatcher
     dispatcher.add_handler(CommandHandler('help', handle_help))
     dispatcher.add_handler(CommandHandler('start_game_with', handle_start_game))
