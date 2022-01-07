@@ -1,9 +1,31 @@
-version: '3'
+version: '3.5'
 
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: fourinrow-bot:latest
     environment:
+      - DB_HOST=mongodb
       - BOT_TOKEN=${BOT_TOKEN}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+    depends_on:
+      mongodb:
+       condition: service_healthy
+
+  mongodb:
+    image: mongo:latest
+    environment:
+      - MONGO_INITDB_DATABASE=fourinarow
+      - MONGO_INITDB_ROOT_USERNAME=${DB_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - mongodb_data_container:/data/db
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongo localhost:27017/test --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
+volumes:
+  mongodb_data_container:
