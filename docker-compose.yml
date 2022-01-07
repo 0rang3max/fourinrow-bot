@@ -1,7 +1,7 @@
 version: '3.5'
 
 services:
-  app:
+  bot:
     image: fourinrow-bot:latest
     environment:
       - DB_HOST=mongodb
@@ -9,8 +9,7 @@ services:
       - DB_USERNAME=${DB_USERNAME}
       - DB_PASSWORD=${DB_PASSWORD}
     depends_on:
-      mongodb:
-       condition: service_healthy
+      - mongodb
 
   mongodb:
     image: mongo:latest
