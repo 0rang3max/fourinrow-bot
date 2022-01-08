@@ -127,10 +127,16 @@ class Game:
 
         return self.game_board.check_move(*token_pos)
 
-    def __str__(self):
-        header = '1️⃣2️⃣3️⃣4️⃣5️⃣6️⃣7️⃣'
-        footer = f'Current move: {GameBoard.tokens_repr[self.current_move]} @{self.players[self.current_move]}'
-        return '\n'.join([header, str(self.game_board), footer ])
+    @property
+    def game_field_str(self):
+        return f'1️⃣2️⃣3️⃣4️⃣5️⃣6️⃣7️⃣\n{str(self.game_board)}'
+
+    @property
+    def current_move_str(self):
+        return (
+            f'Current move: {GameBoard.tokens_repr[self.current_move]}'
+            f'@{self.players[self.current_move]}'
+        )
 
     def serialize(self) -> dict:
         return {
