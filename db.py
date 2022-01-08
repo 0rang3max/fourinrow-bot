@@ -4,9 +4,11 @@ from game import Game
 from exceptions import db_exceptions
 
 
+
 client = MongoClient(
-    host=config.DB_HOST, port=int(config.DB_PORT),
-    username=config.DB_USERNAME, password=config.DB_PASSWORD
+    f'mongodb+srv://{config.DB_USERNAME}:{config.DB_PASSWORD}'
+    f'@{config.DB_HOST}/{config.DB_DATABASE}'
+    '?retryWrites=true&w=majority'
 )
 db = getattr(client, config.DB_DATABASE)
 

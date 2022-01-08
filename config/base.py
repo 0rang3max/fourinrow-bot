@@ -1,6 +1,6 @@
 BOT_TOKEN = ''
-DB_DATABASE = 'fourinarow'
-DB_USERNAME = 'fourinarow'
+DB_DATABASE = 'fourinrow'
+DB_USERNAME = 'fourinrow'
 DB_PASSWORD = ''
 DB_HOST = ''
 DB_PORT = '27017'
