@@ -129,7 +129,10 @@ dmypy.json
 .pyre/
 
 # Local conf
-config.py
+local.py
 
 #VSCode
 .vscode
+
+# Docker compose
+docker-compose.dev.yml
