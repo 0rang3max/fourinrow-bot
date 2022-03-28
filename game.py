@@ -1,6 +1,9 @@
+import shelve
 import random
+
+import config
 from typing import List, Optional
-from exceptions import game_exceptions
+from exceptions import game_exceptions, db_exceptions
 
 
 class GameBoard:
@@ -100,7 +103,7 @@ class Game:
     def __init__(
         self,
         players: list,
-        game_id: Optional[int] = None,
+        game_id: str,
         current_move: Optional[str] = None,
         game_board_data: Optional[dict] = None,
     ) -> None:
@@ -138,19 +141,21 @@ class Game:
             f'@{self.players[self.current_move]}'
         )
 
-    def serialize(self) -> dict:
-        return {
-            'gameId': self.game_id,
-            'players': list(self.players.values()),
-            'currentMove': self.current_move,
-            'gameBoardData': self.game_board.serialize(),
-        }
+    def save(self) -> None:
+        with shelve.open(config.SHELVE_DB) as games:
+            games[self.game_id] = self
     
     @classmethod
-    def deserialize(cls, data):
-        return cls(
-            game_id = data['gameId'],
-            players = data['players'],
-            current_move = data['currentMove'],
-            game_board_data = data['gameBoardData'],
-        )
+    def get_by_id(cls, game_id: str) -> 'Game':
+        with shelve.open(config.SHELVE_DB) as games:
+            if not game_id in games:
+                raise db_exceptions.GameDoesNotExist
+            return games[game_id]
+
+    def __delete__(self):
+        with shelve.open(config.SHELVE_DB) as games:
+            try:
+                del games[self.game_id]
+            except KeyError:
+                raise db_exceptions.GameDoesNotExist
+        del self

@@ -6,7 +6,6 @@ from telegram.ext import CallbackContext
 import config
 from exceptions import game_exceptions, db_exceptions
 from game import Game
-from db import Games
 
 
 def _get_keyboard(game_board_message_id, game):
@@ -49,8 +48,8 @@ def handle_keyboard(update: Update, context: CallbackContext) -> None:
             query.answer('You can`t play with yourself!')
             return
 
-        game = Game(players=[username, players_move_str.split('@')[1]])
-        Games.save_game(game_id, game)
+        game = Game(players=[username, players_move_str.split('@')[1]], game_id=game_id)
+        game.save()
         context.bot.edit_message_text(
             chat_id=query.message.chat_id, message_id=game_id,
             text=f'{game.game_field_str}\n{game.current_move_str}',
@@ -59,7 +58,7 @@ def handle_keyboard(update: Update, context: CallbackContext) -> None:
         return
 
     try:
-        game: Game = Games.get_game(game_id)
+        game: Game = Game.get_by_id(game_id)
     except db_exceptions.GameDoesNotExist:
         query.answer('Game doesn`t exist anymore')
         return
@@ -71,7 +70,7 @@ def handle_keyboard(update: Update, context: CallbackContext) -> None:
             chat_id=query.message.chat_id, message_id=game_id,
             text=f'{game.game_field_str}\n@{username} gave up! @{winner} wins!'
         )
-        Games.delete_game(game_id)
+        del game
         return
     
     players_move = int(players_move_str)
@@ -91,7 +90,7 @@ def handle_keyboard(update: Update, context: CallbackContext) -> None:
             chat_id=query.message.chat_id, message_id=game_id,
             text=f'{game.game_field_str}\nPlayer @{username} won!'
         )
-        Games.delete_game(game_id)
+        del game
         return
 
     if not game.game_board.moves_left:
@@ -99,10 +98,10 @@ def handle_keyboard(update: Update, context: CallbackContext) -> None:
             chat_id=query.message.chat_id, message_id=game_id,
             text=f'{game.game_field_str}\nNo more moves left. It\'s a draw!'
         )
-        Games.delete_game(game_id)
+        del game
         return
     
-    Games.save_game(game_id, game)
+    game.save()
     context.bot.edit_message_text(
         chat_id=query.message.chat_id, message_id=game_id,
         text=f'{game.game_field_str}\n{game.current_move_str}',
