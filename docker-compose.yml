@@ -5,6 +5,3 @@ services:
     image: fourinrow-bot:latest
     environment:
       - BOT_TOKEN=${BOT_TOKEN}
-      - DB_HOST=${DB_HOST}
-      - DB_USERNAME=${DB_USERNAME}
-      - DB_PASSWORD=${DB_PASSWORD}

@@ -40,8 +40,7 @@ def handle_start_game(update: Update, context: CallbackContext) -> None:
 def handle_keyboard(update: Update, context: CallbackContext) -> None:
     query = update.callback_query
     username = query.from_user.username
-    game_id_str, players_move_str = query.data.split('_')
-    game_id = int(game_id_str)
+    game_id, players_move_str = query.data.split('_')
 
     if 'start' in players_move_str:
         first_player = players_move_str.split('@')[1]
