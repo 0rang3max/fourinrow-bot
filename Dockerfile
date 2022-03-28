@@ -7,4 +7,6 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
+RUN mkdir data
+
 ENTRYPOINT ["python", "bot.py"]

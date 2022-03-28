@@ -5,3 +5,8 @@ services:
     image: fourinrow-bot:latest
     environment:
       - BOT_TOKEN=${BOT_TOKEN}
+    volumes:
+      - bot_data:/opt/data
+  
+volumes:
+  bot_data:

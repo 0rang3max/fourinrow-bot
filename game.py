@@ -142,18 +142,18 @@ class Game:
         )
 
     def save(self) -> None:
-        with shelve.open(config.SHELVE_DB) as games:
+        with shelve.open(config.SHELVE_DB_PATH) as games:
             games[self.game_id] = self
     
     @classmethod
     def get_by_id(cls, game_id: str) -> 'Game':
-        with shelve.open(config.SHELVE_DB) as games:
+        with shelve.open(config.SHELVE_DB_PATH) as games:
             if not game_id in games:
                 raise db_exceptions.GameDoesNotExist
             return games[game_id]
 
     def __delete__(self):
-        with shelve.open(config.SHELVE_DB) as games:
+        with shelve.open(config.SHELVE_DB_PATH) as games:
             try:
                 del games[self.game_id]
             except KeyError:
